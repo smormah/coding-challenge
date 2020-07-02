@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace ConstructionLine.CodingChallenge
 {
@@ -9,19 +10,47 @@ namespace ConstructionLine.CodingChallenge
         public SearchEngine(List<Shirt> shirts)
         {
             _shirts = shirts;
-
-            // TODO: data preparation and initialisation of additional data structures to improve performance goes here.
-
         }
-
 
         public SearchResults Search(SearchOptions options)
         {
-            // TODO: search logic goes here.
+            var filterForShirts = _shirts.Where(x =>
+                (!options.Colors.Any() || options.Colors.Any(y => y == x.Color)) 
+                && (!options.Sizes.Any() || options.Sizes.Any(y => y == x.Size)))
+                    .ToList();
+
+            var sizeCounts = GetSizeCounts(filterForShirts);
+            var colorCounts = GetColorCounts(filterForShirts);
 
             return new SearchResults
             {
+                Shirts = filterForShirts,
+                SizeCounts = sizeCounts,
+                ColorCounts = colorCounts
             };
+        }
+
+        private static List<ColorCount> GetColorCounts(List<Shirt> filterForShirts)
+        {
+            var colorCountList = new List<ColorCount>();
+            foreach (var color in Color.All)
+            {
+                var colorCount = new ColorCount
+                    { Count = filterForShirts.Count(x => x.Color.Equals(color)), Color = color };
+                colorCountList.Add(colorCount);
+            }
+            return colorCountList;
+        }
+
+        private static List<SizeCount> GetSizeCounts(List<Shirt> filterForShirts)
+        {
+            var sizeCountList = new List<SizeCount>();
+            foreach (var size in Size.All)
+            {
+                var sizeCount = new SizeCount { Count = filterForShirts.Count(x => x.Size.Equals(size)), Size = size };
+                sizeCountList.Add(sizeCount);
+            }
+            return sizeCountList;
         }
     }
 }
