@@ -7,8 +7,9 @@ namespace ConstructionLine.CodingChallenge.Tests
     [TestFixture]
     public class SearchEngineTests : SearchEngineTestsBase
     {
+
         [Test]
-        public void ShouldReturnCorrectResultsWhenQueriedUsingDualCategorySearchOptions()
+        public void ShouldReturnCorrectResultsWhenQueriedUsingSingleColorDoubleSizeOptions()
         {
             var shirts = new List<Shirt>
             {
@@ -23,6 +24,57 @@ namespace ConstructionLine.CodingChallenge.Tests
             {
                 Colors = new List<Color> {Color.Red},
                 Sizes = new List<Size> {Size.Small, Size.Medium}
+            };
+
+            var results = searchEngine.Search(searchOptions);
+
+            AssertResults(results.Shirts, searchOptions);
+            AssertSizeCounts(shirts, searchOptions, results.SizeCounts);
+            AssertColorCounts(shirts, searchOptions, results.ColorCounts);
+        }
+
+        [Test]
+        public void ShouldReturnCorrectResultsWhenQueriedUsingDoubleColorDoubleSizeOptions()
+        {
+            var shirts = new List<Shirt>
+            {
+                new Shirt(Guid.NewGuid(), "Red - Small", Size.Small, Color.Red),
+                new Shirt(Guid.NewGuid(), "Black - Medium", Size.Medium, Color.Black),
+                new Shirt(Guid.NewGuid(), "Blue - Large", Size.Large, Color.Blue),
+            };
+
+            var searchEngine = new SearchEngine(shirts);
+
+            var searchOptions = new SearchOptions
+            {
+                Colors = new List<Color> { Color.Red, Color.Black },
+                Sizes = new List<Size> { Size.Small, Size.Medium }
+            };
+
+            var results = searchEngine.Search(searchOptions);
+
+            AssertResults(results.Shirts, searchOptions);
+            AssertSizeCounts(shirts, searchOptions, results.SizeCounts);
+            AssertColorCounts(shirts, searchOptions, results.ColorCounts);
+        }
+
+
+        [Test]
+        public void ShouldReturnCorrectResultsWhenQueriedUsingDoubleColorSingleSizeOptions()
+        {
+            var shirts = new List<Shirt>
+            {
+                new Shirt(Guid.NewGuid(), "Red - Small", Size.Small, Color.Red),
+                new Shirt(Guid.NewGuid(), "Black - Medium", Size.Medium, Color.Black),
+                new Shirt(Guid.NewGuid(), "Blue - Large", Size.Large, Color.Blue),
+            };
+
+            var searchEngine = new SearchEngine(shirts);
+
+            var searchOptions = new SearchOptions
+            {
+                Colors = new List<Color> { Color.Red, Color.Black },
+                Sizes = new List<Size> { Size.Medium }
             };
 
             var results = searchEngine.Search(searchOptions);
@@ -92,9 +144,7 @@ namespace ConstructionLine.CodingChallenge.Tests
 
             var searchEngine = new SearchEngine(shirts);
 
-            var searchOptions = new SearchOptions
-            {
-            };
+            var searchOptions = new SearchOptions();
 
             var results = searchEngine.Search(searchOptions);
 
